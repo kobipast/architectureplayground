@@ -13,7 +13,7 @@ function App() {
         <p>User Service Client</p>
         
         <div className="card">
-          <button onClick={() => setShowForm(!showForm)}>
+          <button onClick={() => setShowForm(showForm => !showForm)}>
             {showForm ? 'Hide Form' : 'Create New User'}
           </button>
         </div>
