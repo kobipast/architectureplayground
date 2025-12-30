@@ -1,0 +1,16 @@
+<configuration>
+    <property name="APP_PREFIX" value="[USER-SERVICE]" />
+    <property name="APP_NAME" value="${spring.application.name}" />
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss} [%level] [${APP_NAME}] [%logger{36}] - %msg%n</pattern>
+            <!--<pattern>%d{HH:mm:ss} [%level] [%X{traceId}] [${APP_NAME}] [%logger{36}] - %msg%n</pattern> -->
+
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+    </root>
+</configuration>

@@ -12,11 +12,11 @@ const axiosClient = axios.create({
 // Request interceptor
 axiosClient.interceptors.request.use(
   (config) => {
-    // Add any auth tokens or headers here if needed
-    // const token = localStorage.getItem('token');
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`;
-    // }
+    // Add JWT token to requests
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
   (error) => {
@@ -37,6 +37,11 @@ axiosClient.interceptors.response.use(
         case 401:
           // Unauthorized - handle logout
           console.error('Unauthorized access');
+          // Clear token and redirect to login
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          // Dispatch custom event for auth context to handle
+          window.dispatchEvent(new Event('auth:logout'));
           break;
         case 403:
           // Forbidden

@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
@@ -32,7 +31,7 @@ public class UserController {
     // GET /users
     @GetMapping
     public List<UserDto> getAllUsers() {
-
+        log.debug("UserController::getAllUsers");
         /*return List.of(
                 new UserDto("1", "Alice", "alice@test.com"),
                 new UserDto("2", "Bob", "bob@test.com")
@@ -43,6 +42,7 @@ public class UserController {
     // GET /users/{id}
     @GetMapping("/{id}")
     public UserDto getUserById(@PathVariable String id) {
+        log.debug("UserController::getUserById {}", id);
         return new UserDto(id, "Dummy User", "dummy@test.com");
     }
 
@@ -60,6 +60,7 @@ public class UserController {
             @PathVariable String id,
             @RequestBody UpdateUserRequest request
     ) {
+        log.debug("UserController::updateUser {}", id);
         return new UserDto(
                 id,
                 request.getName(),
@@ -71,6 +72,7 @@ public class UserController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(@PathVariable String id) {
+        log.debug("UserController::deleteUser {} \n no implementation yet.", id);
         // no-op (dummy)
     }
 }
