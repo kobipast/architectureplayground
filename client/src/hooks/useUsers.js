@@ -1,3 +1,16 @@
+/**
+ * ⚠️ NOTE: This file is currently NOT IN USE
+ * 
+ * This file contains hooks for user management (CRUD operations) that were used
+ * when the app displayed a users list and user form. These are kept for future
+ * reference as examples of React Query patterns including:
+ * - Query keys organization
+ * - staleTime configuration
+ * - invalidateQueries for cache invalidation
+ * - setQueryData for optimistic updates
+ * - enabled option for conditional queries
+ */
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import userService from '../api/userService';
 
