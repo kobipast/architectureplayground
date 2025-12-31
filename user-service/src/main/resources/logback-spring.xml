@@ -1,6 +1,6 @@
 <configuration>
-    <property name="APP_PREFIX" value="[USER-SERVICE]" />
-    <property name="APP_NAME" value="${spring.application.name}" />
+    <!--<property name="APP_PREFIX" value="[USER-SERVICE]" /> -->
+    <springProperty name="APP_NAME" source="spring.application.name" defaultValue="unknown-service"/>
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
