@@ -4,9 +4,11 @@
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
+            <!--
             <pattern>%d{HH:mm:ss} [%level] [${APP_NAME}] [%logger{36}] - %msg%n</pattern>
-            <!--<pattern>%d{HH:mm:ss} [%level] [%X{traceId}] [${APP_NAME}] [%logger{36}] - %msg%n</pattern> -->
-
+            <pattern>%d{HH:mm:ss} [%level] [%X{traceId}] [${APP_NAME}] [%logger{36}] - %msg%n</pattern>
+             -->
+            <pattern>%d{HH:mm:ss} [%thread] %-5level [%X{correlationId}] [%logger{36}] - %msg%n</pattern>
         </encoder>
     </appender>
 

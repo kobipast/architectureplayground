@@ -16,6 +16,21 @@ const MainDashboard = () => {
     console.log('test circuit breaker clicked');
   };
 
+  const handleShowJWT = () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      // Show token in alert and copy to clipboard
+      alert(`JWT Token:\n\n${token}`);
+      navigator.clipboard.writeText(token).then(() => {
+        console.log('Token copied to clipboard');
+      }).catch(err => {
+        console.error('Failed to copy token:', err);
+      });
+    } else {
+      alert('No token found');
+    }
+  };
+
   return (
     <div className="dashboard-container">
       <div className="dashboard-card">
@@ -38,6 +53,12 @@ const MainDashboard = () => {
             onClick={handleTestCircuitBreaker}
           >
             test circuite-breaker
+          </button>
+          <button 
+            className="dashboard-button" 
+            onClick={handleShowJWT}
+          >
+            Show JWT Token
           </button>
         </div>
       </div>

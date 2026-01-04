@@ -37,6 +37,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String userEmail;
         log.info("CustomUserDetailsService::loadUserByUsername");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            log.info("JwtAuthenticationFilter::No Bearer Token provide");
             filterChain.doFilter(request, response);
             return;
         }
