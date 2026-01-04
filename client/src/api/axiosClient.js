@@ -17,6 +17,12 @@ axiosClient.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    
+    // Generate and add X-Correlation-Id header if not already present
+    if (!config.headers['X-Correlation-Id']) {
+      config.headers['X-Correlation-Id'] = crypto.randomUUID();
+    }
+    
     return config;
   },
   (error) => {
