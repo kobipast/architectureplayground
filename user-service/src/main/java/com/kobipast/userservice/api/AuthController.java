@@ -5,6 +5,7 @@ import com.kobipast.userservice.dto.LoginRequest;
 import com.kobipast.userservice.dto.RegisterRequest;
 import com.kobipast.userservice.dto.UserDto;
 import com.kobipast.userservice.mapper.UserMapper;
+import com.kobipast.userservice.persistence.entity.Role;
 import com.kobipast.userservice.persistence.entity.User;
 import com.kobipast.userservice.persistence.repository.UserRepository;
 import com.kobipast.userservice.security.JwtService;
@@ -52,11 +53,11 @@ public class AuthController {
 
         // Create new user with encoded password
         String encodedPassword = passwordEncoder.encode(request.getPassword());
-        User user = new User(request.getName(), request.getEmail(), encodedPassword);
+        User user = new User(request.getName(), request.getEmail(), encodedPassword, Role.USER);
         user = userRepository.save(user);
 
         // Generate JWT token
-        String token = jwtService.generateToken(user.getEmail());
+        String token = jwtService.generateToken(user);
 
         // Create response
         UserDto userDto = userMapper.toDto(user);
@@ -82,7 +83,7 @@ public class AuthController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         // Generate JWT token
-        String token = jwtService.generateToken(user.getEmail());
+        String token = jwtService.generateToken(user);
 
         // Create response
         UserDto userDto = userMapper.toDto(user);
