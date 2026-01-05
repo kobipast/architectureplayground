@@ -2,8 +2,10 @@ package com.kobipast.userservice.architecture.error;
 
 import com.kobipast.userservice.architecture.observability.CorrelationIdFilter;
 import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -46,6 +48,17 @@ public class GlobalExceptionHandler {
         pd.setDetail(ex.getMessage());
         pd.setInstance(URI.create(request.getRequestURI()));
         pd.setProperty("correlationId", request.getHeader(CorrelationIdFilter.HEADER));
+        return pd;
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ProblemDetail handleAccessDenied(AccessDeniedException ex, HttpServletRequest request) {
+        ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
+        pd.setType(URI.create("https://example.com/problems/forbidden"));
+        pd.setTitle("Forbidden");
+        pd.setDetail("Access Denied");
+        pd.setInstance(URI.create(request.getRequestURI()));
+        pd.setProperty("correlationId",  MDC.get("correlationId"));
         return pd;
     }
 }
