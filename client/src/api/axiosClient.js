@@ -4,6 +4,7 @@ import axios from 'axios';
 const axiosClient = axios.create({
   baseURL: '/api', // Will be proxied to backend by Vite
   timeout: 10000,
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -35,20 +36,49 @@ axiosClient.interceptors.response.use(
   (response) => {
     return response;
   },
-  (error) => {
+  async (error) => {
+    const originalRequest = error.config;
     // Handle common errors
     if (error.response) {
       // Server responded with error status
       switch (error.response.status) {
-        case 401:
+        case 401:{
           // Unauthorized - handle logout
           console.error('Unauthorized access');
-          // Clear token and redirect to login
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-          // Dispatch custom event for auth context to handle
-          window.dispatchEvent(new Event('auth:logout'));
-          break;
+          // if the refresh itself is unauthorized, logout
+          if (originalRequest?.url?.includes('/auth/refresh')) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.dispatchEvent(new Event('auth:logout'));
+            return Promise.reject(error);
+          }
+          // avoid endless retry
+          if (originalRequest?._retry) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.dispatchEvent(new Event('auth:logout'));
+            return Promise.reject(error);
+          }
+          originalRequest._retry = true;
+
+          try {
+            const refreshRes = await axiosClient.post('/auth/refresh');
+            const newToken = refreshRes.data.token; 
+            localStorage.setItem('token', newToken);
+
+            originalRequest.headers = originalRequest.headers || {};
+            originalRequest.headers.Authorization = `Bearer ${newToken}`;
+
+            return axiosClient(originalRequest);
+          } catch (refreshErr) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.dispatchEvent(new Event('auth:logout'));
+            return Promise.reject(refreshErr);
+          }
+
+        }
+
         case 403:
           // Forbidden
           console.error('Forbidden access');

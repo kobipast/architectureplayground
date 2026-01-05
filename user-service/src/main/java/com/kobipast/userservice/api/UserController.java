@@ -8,6 +8,7 @@ import com.kobipast.userservice.persistence.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -74,5 +75,11 @@ public class UserController {
     public void deleteUser(@PathVariable String id) {
         log.debug("UserController::deleteUser {} \n no implementation yet.", id);
         // no-op (dummy)
+    }
+
+    @GetMapping("/me")
+    public UserDto me(Authentication authentication) {
+        String email = authentication.getName();
+        return userService.getByEmail(email);
     }
 }

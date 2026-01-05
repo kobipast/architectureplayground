@@ -3,11 +3,11 @@ package com.kobipast.userservice.mapper;
 
 import com.kobipast.userservice.dto.UserDto;
 import com.kobipast.userservice.persistence.entity.User;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Service
+@Component
 public class UserMapper {
 
     public List<UserDto> toDtoList(List<User> userList){
