@@ -2,12 +2,18 @@ import { useState } from 'react';
 import authService from '../api/authService';
 import axiosClient from '../api/axiosClient';
 import IdempotencyDemo from './IdempotencyDemo';
+import CorrelationDemo from './CorrelationDemo';
+import ProblemDetailsDemo from './ProblemDetailsDemo';
+import RBACDemo from './RBACDemo';
 import './MainDashboard.css';
 
 const MainDashboard = () => {
   const [refreshLoading, setRefreshLoading] = useState(false);
   const [rateLimitLoading, setRateLimitLoading] = useState(false);
   const [showIdempotencyDemo, setShowIdempotencyDemo] = useState(false);
+  const [showCorrelationDemo, setShowCorrelationDemo] = useState(false);
+  const [showProblemDetailsDemo, setShowProblemDetailsDemo] = useState(false);
+  const [showRBACDemo, setShowRBACDemo] = useState(false);
 
   const handleShowJWT = () => {
     const token = localStorage.getItem('token');
@@ -62,11 +68,41 @@ const MainDashboard = () => {
     return <IdempotencyDemo onBack={() => setShowIdempotencyDemo(false)} />;
   }
 
+  if (showCorrelationDemo) {
+    return <CorrelationDemo onBack={() => setShowCorrelationDemo(false)} />;
+  }
+
+  if (showProblemDetailsDemo) {
+    return <ProblemDetailsDemo onBack={() => setShowProblemDetailsDemo(false)} />;
+  }
+
+  if (showRBACDemo) {
+    return <RBACDemo onBack={() => setShowRBACDemo(false)} />;
+  }
+
   return (
     <div className="dashboard-container">
       <div className="dashboard-card">
         <h2>Microservices Architecture Playground</h2>
         <div className="buttons-container">
+        <button 
+            className="dashboard-button" 
+            onClick={() => setShowProblemDetailsDemo(true)}
+          >
+            Problem Details
+          </button>
+          <button 
+            className="dashboard-button" 
+            onClick={() => setShowCorrelationDemo(true)}
+          >
+            Correlation ID
+          </button>
+          <button 
+            className="dashboard-button" 
+            onClick={() => setShowRBACDemo(true)}
+          >
+            RBAC
+          </button>
           <button 
             className="dashboard-button" 
             onClick={handleShowJWT}
@@ -92,7 +128,7 @@ const MainDashboard = () => {
             onClick={() => setShowIdempotencyDemo(true)}
           >
             Idempotency
-          </button>
+          </button>        
         </div>
       </div>
     </div>
