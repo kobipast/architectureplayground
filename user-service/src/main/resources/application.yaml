@@ -33,3 +33,12 @@ management:
     web:
       exposure:
         include: health,info
+
+resilience4j:
+  ratelimiter:
+    instances:
+      architectureRateLimiter:
+        limitForPeriod: 5
+        limitRefreshPeriod: 10s
+        timeoutDuration: 0
+

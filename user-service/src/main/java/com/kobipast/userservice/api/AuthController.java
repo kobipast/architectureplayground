@@ -28,7 +28,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
-import java.util.List;
 
 @RestController
 @RequestMapping("/auth")
@@ -106,8 +105,8 @@ public class AuthController {
         ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", rt.getToken())
                 .httpOnly(true)
                 .secure(false)          // dev
-                .path("/auth/refresh")
-                .sameSite("Strict")
+                .path("/api/auth")
+                .sameSite("Lax")
                 .maxAge(Duration.ofDays(7))
                 .build();
 
@@ -141,8 +140,8 @@ public class AuthController {
         ResponseCookie delete = ResponseCookie.from("refreshToken", "")
                 .httpOnly(true)
                 .secure(false)          // true in prod
-                .path("/auth/refresh")
-                .sameSite("Strict")
+                .path("/api/auth")
+                .sameSite("Lax")
                 .maxAge(0)
                 .build();
 
@@ -173,8 +172,8 @@ public class AuthController {
         ResponseCookie delete = ResponseCookie.from("refreshToken", "")
                 .httpOnly(true)
                 .secure(false)
-                .path("/auth/refresh")
-                .sameSite("Strict")
+                .path("/api/auth")
+                .sameSite("Lax")
                 .maxAge(0)
                 .build();
 
