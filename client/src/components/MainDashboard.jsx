@@ -94,7 +94,7 @@ const MainDashboard = () => {
             className="dashboard-button" 
             onClick={() => setShowRateLimitDemo(true)}
           >
-            Test Rate Limiter
+            Rate Limiter
           </button>
           <button 
             className="dashboard-button" 
