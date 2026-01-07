@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import authService from '../api/authService';
 import axiosClient from '../api/axiosClient';
+import IdempotencyDemo from './IdempotencyDemo';
 import './MainDashboard.css';
 
 const MainDashboard = () => {
   const [refreshLoading, setRefreshLoading] = useState(false);
   const [rateLimitLoading, setRateLimitLoading] = useState(false);
+  const [showIdempotencyDemo, setShowIdempotencyDemo] = useState(false);
 
   const handleOverloadServer = () => {
     // TODO: Implement overload the server
@@ -71,6 +73,10 @@ const MainDashboard = () => {
     }
   };
 
+  if (showIdempotencyDemo) {
+    return <IdempotencyDemo onBack={() => setShowIdempotencyDemo(false)} />;
+  }
+
   return (
     <div className="dashboard-container">
       <div className="dashboard-card">
@@ -113,6 +119,12 @@ const MainDashboard = () => {
             disabled={rateLimitLoading}
           >
             {rateLimitLoading ? 'Testing...' : 'Test Rate Limiter'}
+          </button>
+          <button 
+            className="dashboard-button" 
+            onClick={() => setShowIdempotencyDemo(true)}
+          >
+            Idempotency
           </button>
         </div>
       </div>
