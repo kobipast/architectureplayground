@@ -9,21 +9,6 @@ const MainDashboard = () => {
   const [rateLimitLoading, setRateLimitLoading] = useState(false);
   const [showIdempotencyDemo, setShowIdempotencyDemo] = useState(false);
 
-  const handleOverloadServer = () => {
-    // TODO: Implement overload the server
-    console.log('overload the server clicked');
-  };
-
-  const handleRequestWithoutPermission = () => {
-    // TODO: Implement request without permission
-    console.log('request without permission clicked');
-  };
-
-  const handleTestCircuitBreaker = () => {
-    // TODO: Implement test circuit breaker
-    console.log('test circuit breaker clicked');
-  };
-
   const handleShowJWT = () => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -82,24 +67,6 @@ const MainDashboard = () => {
       <div className="dashboard-card">
         <h2>Microservices Architecture Playground</h2>
         <div className="buttons-container">
-          <button 
-            className="dashboard-button" 
-            onClick={handleOverloadServer}
-          >
-            overload the server
-          </button>
-          <button 
-            className="dashboard-button" 
-            onClick={handleRequestWithoutPermission}
-          >
-            request without permission
-          </button>
-          <button 
-            className="dashboard-button" 
-            onClick={handleTestCircuitBreaker}
-          >
-            test circuite-breaker
-          </button>
           <button 
             className="dashboard-button" 
             onClick={handleShowJWT}
