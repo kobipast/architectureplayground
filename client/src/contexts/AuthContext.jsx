@@ -33,6 +33,18 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
+      // Validate session with server after hydration
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    authService.getCurrentUser()
+      .catch(() => {
+        authService.logout();
+        setUser(null);
+        setIsAuthenticated(false);
+      });
+  }, [isAuthenticated]);
+
   // Listen for logout events (from axios interceptor)
   useEffect(() => {
     const handleLogout = () => {

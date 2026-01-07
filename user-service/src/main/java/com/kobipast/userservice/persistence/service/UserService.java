@@ -1,5 +1,7 @@
 package com.kobipast.userservice.persistence.service;
 
+import com.kobipast.userservice.dto.UserDto;
+import com.kobipast.userservice.mapper.UserMapper;
 import com.kobipast.userservice.persistence.entity.User;
 import com.kobipast.userservice.persistence.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -9,10 +11,13 @@ import java.util.List;
 @Service
 public class UserService {
 
+    private final UserMapper userMapper;
+
     private final UserRepository repository;
 
-    public UserService(UserRepository repository) {
+    public UserService(UserRepository repository, UserMapper userMapper) {
         this.repository = repository;
+        this.userMapper = userMapper;
     }
 
     public List<User> getAll() {
@@ -35,5 +40,11 @@ public class UserService {
 
     public void delete(String id) {
         repository.deleteById(id);
+    }
+
+    public UserDto getByEmail(String email) {
+        User user = repository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return userMapper.toDto(user);
     }
 }

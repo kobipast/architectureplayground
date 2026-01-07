@@ -11,20 +11,27 @@ const authService = {
     return axiosClient.post('/auth/login', credentials);
   },
 
-  // Logout user (client-side only, server may have endpoint for token invalidation)
-  logout: () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+  // Logout user
+  logout: async () => {
+    try {
+      await axiosClient.post('/auth/logout'); // Best-effort server-side logout (clears refresh token cookie/state)
+    } catch (e) {
+      // Ignore server errors; still clear local auth state
+    } finally {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.dispatchEvent(new Event('auth:logout'));
+    }
   },
 
   // Get current user info (if backend provides this endpoint)
   getCurrentUser: () => {
-    return axiosClient.get('/auth/me');
+    return axiosClient.get('/users/me');
   },
 
   // Refresh token (if backend supports refresh tokens)
-  refreshToken: (refreshToken) => {
-    return axiosClient.post('/auth/refresh', { refreshToken });
+  refreshToken: () => {
+    return axiosClient.post('/auth/refresh');
   },
 };
 
