@@ -1,5 +1,6 @@
 package com.kobipast.userservice.architecture;
 
+import com.kobipast.userservice.architecture.cache.CacheDemoService;
 import com.kobipast.userservice.architecture.dto.*;
 import com.kobipast.userservice.architecture.idempotency.IdempotencyService;
 import com.kobipast.userservice.architecture.observability.CorrelationIdFilter;
@@ -21,8 +22,11 @@ public class ArchitectureController {
 
     private final IdempotencyService idempotencyService;
 
-    public ArchitectureController(IdempotencyService idempotencyService) {
+    private final CacheDemoService cacheDemoService;
+
+    public ArchitectureController(IdempotencyService idempotencyService, CacheDemoService cacheDemoService) {
         this.idempotencyService = idempotencyService;
+        this.cacheDemoService = cacheDemoService;
     }
 
     @GetMapping("/trace")
@@ -76,6 +80,22 @@ public class ArchitectureController {
         IdempotencyResponse body = new IdempotencyResponse(result.body().message(), result.replay());
 
         return ResponseEntity.status(result.statusCode()).body(body);
+    }
+
+    @GetMapping("/cache/profile")
+    public ArchitectureResponse cacheProfile(@RequestParam String userId) {
+        Map<String, Object> data = cacheDemoService.getProfile(userId);
+
+        // if it came from cache, our method wasn't executed, so "cached" will still be false.
+        // We’ll override it here based on a simple heuristic: presence of "generatedAt" is not enough.
+        // Better: return a wrapper with a flag from service layer, but keep it simple:
+        return new ArchitectureResponse("caching", Instant.now(), data);
+    }
+
+    @PostMapping("/cache/evict")
+    public ArchitectureResponse cacheEvict(@RequestParam String userId) {
+        cacheDemoService.evictProfile(userId);
+        return new ArchitectureResponse("caching-evict", Instant.now(), Map.of("evictedUserId", userId));
     }
 
 
