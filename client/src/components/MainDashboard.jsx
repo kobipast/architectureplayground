@@ -1,28 +1,20 @@
 import { useState } from 'react';
-import authService from '../api/authService';
 import axiosClient from '../api/axiosClient';
 import IdempotencyDemo from './IdempotencyDemo';
+import CorrelationDemo from './CorrelationDemo';
+import ProblemDetailsDemo from './ProblemDetailsDemo';
+import RBACDemo from './RBACDemo';
+import RefreshTokenDemo from './RefreshTokenDemo';
+import RateLimitDemo from './RateLimitDemo';
 import './MainDashboard.css';
 
 const MainDashboard = () => {
-  const [refreshLoading, setRefreshLoading] = useState(false);
-  const [rateLimitLoading, setRateLimitLoading] = useState(false);
   const [showIdempotencyDemo, setShowIdempotencyDemo] = useState(false);
-
-  const handleOverloadServer = () => {
-    // TODO: Implement overload the server
-    console.log('overload the server clicked');
-  };
-
-  const handleRequestWithoutPermission = () => {
-    // TODO: Implement request without permission
-    console.log('request without permission clicked');
-  };
-
-  const handleTestCircuitBreaker = () => {
-    // TODO: Implement test circuit breaker
-    console.log('test circuit breaker clicked');
-  };
+  const [showCorrelationDemo, setShowCorrelationDemo] = useState(false);
+  const [showProblemDetailsDemo, setShowProblemDetailsDemo] = useState(false);
+  const [showRBACDemo, setShowRBACDemo] = useState(false);
+  const [showRefreshTokenDemo, setShowRefreshTokenDemo] = useState(false);
+  const [showRateLimitDemo, setShowRateLimitDemo] = useState(false);
 
   const handleShowJWT = () => {
     const token = localStorage.getItem('token');
@@ -39,42 +31,28 @@ const MainDashboard = () => {
     }
   };
 
-  const handleRefreshToken = async () => {
-    setRefreshLoading(true);
-    try {
-      const response = await authService.refreshToken();
-      const newToken = response.data.token;
-      localStorage.setItem('token', newToken);
-      alert('Token refreshed successfully!');
-      console.log('New token:', newToken);
-    } catch (error) {
-      console.error('Failed to refresh token:', error);
-      alert(`Failed to refresh token: ${error.response?.data?.message || error.message}`);
-    } finally {
-      setRefreshLoading(false);
-    }
-  };
-
-  const handleRateLimit = async () => {
-    setRateLimitLoading(true);
-    try {
-      const response = await axiosClient.get('/architecture/rate-limit');
-      alert(`Rate limit test successful!\n\nResponse: ${JSON.stringify(response.data, null, 2)}`);
-      console.log('Rate limit response:', response.data);
-    } catch (error) {
-      console.error('Rate limit request failed:', error);
-      if (error.response?.status === 429) {
-        alert('Rate limit exceeded! Too many requests.');
-      } else {
-        alert(`Rate limit test failed: ${error.response?.data?.message || error.message}`);
-      }
-    } finally {
-      setRateLimitLoading(false);
-    }
-  };
-
   if (showIdempotencyDemo) {
     return <IdempotencyDemo onBack={() => setShowIdempotencyDemo(false)} />;
+  }
+
+  if (showCorrelationDemo) {
+    return <CorrelationDemo onBack={() => setShowCorrelationDemo(false)} />;
+  }
+
+  if (showProblemDetailsDemo) {
+    return <ProblemDetailsDemo onBack={() => setShowProblemDetailsDemo(false)} />;
+  }
+
+  if (showRBACDemo) {
+    return <RBACDemo onBack={() => setShowRBACDemo(false)} />;
+  }
+
+  if (showRefreshTokenDemo) {
+    return <RefreshTokenDemo onBack={() => setShowRefreshTokenDemo(false)} />;
+  }
+
+  if (showRateLimitDemo) {
+    return <RateLimitDemo onBack={() => setShowRateLimitDemo(false)} />;
   }
 
   return (
@@ -82,23 +60,23 @@ const MainDashboard = () => {
       <div className="dashboard-card">
         <h2>Microservices Architecture Playground</h2>
         <div className="buttons-container">
-          <button 
+        <button 
             className="dashboard-button" 
-            onClick={handleOverloadServer}
+            onClick={() => setShowProblemDetailsDemo(true)}
           >
-            overload the server
+            Problem Details
           </button>
           <button 
             className="dashboard-button" 
-            onClick={handleRequestWithoutPermission}
+            onClick={() => setShowCorrelationDemo(true)}
           >
-            request without permission
+            Correlation ID
           </button>
           <button 
             className="dashboard-button" 
-            onClick={handleTestCircuitBreaker}
+            onClick={() => setShowRBACDemo(true)}
           >
-            test circuite-breaker
+            RBAC
           </button>
           <button 
             className="dashboard-button" 
@@ -108,24 +86,22 @@ const MainDashboard = () => {
           </button>
           <button 
             className="dashboard-button" 
-            onClick={handleRefreshToken}
-            disabled={refreshLoading}
+            onClick={() => setShowRefreshTokenDemo(true)}
           >
-            {refreshLoading ? 'Refreshing...' : 'Refresh Token'}
+            Refresh Token
           </button>
           <button 
             className="dashboard-button" 
-            onClick={handleRateLimit}
-            disabled={rateLimitLoading}
+            onClick={() => setShowRateLimitDemo(true)}
           >
-            {rateLimitLoading ? 'Testing...' : 'Test Rate Limiter'}
+            Rate Limiter
           </button>
           <button 
             className="dashboard-button" 
             onClick={() => setShowIdempotencyDemo(true)}
           >
             Idempotency
-          </button>
+          </button>        
         </div>
       </div>
     </div>
