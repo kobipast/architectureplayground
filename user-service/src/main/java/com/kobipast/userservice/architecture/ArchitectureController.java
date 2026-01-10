@@ -3,12 +3,16 @@ package com.kobipast.userservice.architecture;
 import com.kobipast.userservice.architecture.cache.CacheDemoService;
 import com.kobipast.userservice.architecture.dto.*;
 import com.kobipast.userservice.architecture.idempotency.IdempotencyService;
+import com.kobipast.userservice.architecture.integration.OrderClient;
+import com.kobipast.userservice.architecture.integration.dto.CreateOrderRequest;
+import com.kobipast.userservice.architecture.integration.dto.OrderDto;
 import com.kobipast.userservice.architecture.observability.CorrelationIdFilter;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
         import java.time.Instant;
@@ -24,9 +28,12 @@ public class ArchitectureController {
 
     private final CacheDemoService cacheDemoService;
 
-    public ArchitectureController(IdempotencyService idempotencyService, CacheDemoService cacheDemoService) {
+    private final OrderClient orderClient;
+
+    public ArchitectureController(IdempotencyService idempotencyService, CacheDemoService cacheDemoService, OrderClient orderClient) {
         this.idempotencyService = idempotencyService;
         this.cacheDemoService = cacheDemoService;
+        this.orderClient = orderClient;
     }
 
     @GetMapping("/trace")
@@ -96,6 +103,16 @@ public class ArchitectureController {
     public ArchitectureResponse cacheEvict(@RequestParam String userId) {
         cacheDemoService.evictProfile(userId);
         return new ArchitectureResponse("caching-evict", Instant.now(), Map.of("evictedUserId", userId));
+    }
+
+    @GetMapping("/orders/create")
+    public ArchitectureResponse createOrder(@RequestParam(defaultValue = "100") long amount) {
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName(); // email אצלך
+        OrderDto order = orderClient.createOrder(new CreateOrderRequest(userId, amount));
+
+        Map<String, Object> data = new LinkedHashMap<>();
+        data.put("order", order);
+        return new ArchitectureResponse("retry-circuit-breaker", Instant.now(), data);
     }
 
 
