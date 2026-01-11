@@ -6,6 +6,7 @@ import com.kobipast.userservice.architecture.idempotency.IdempotencyService;
 import com.kobipast.userservice.architecture.integration.OrderClient;
 import com.kobipast.userservice.architecture.integration.dto.CreateOrderRequest;
 import com.kobipast.userservice.architecture.integration.dto.OrderDto;
+import com.kobipast.userservice.architecture.integration.dto.UpdateOrderStatusRequest;
 import com.kobipast.userservice.architecture.observability.CorrelationIdFilter;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import jakarta.validation.Valid;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
         import java.time.Instant;
@@ -105,15 +107,37 @@ public class ArchitectureController {
         return new ArchitectureResponse("caching-evict", Instant.now(), Map.of("evictedUserId", userId));
     }
 
-    @GetMapping("/orders/create")
-    public ArchitectureResponse createOrder(@RequestParam(defaultValue = "100") long amount) {
-        String userId = SecurityContextHolder.getContext().getAuthentication().getName(); // email אצלך
-        OrderDto order = orderClient.createOrder(new CreateOrderRequest(userId, amount));
+    @PostMapping("/orders")
+    public ArchitectureResponse createOrder(@RequestBody CreateOrderRequest req) {
+        String userId;
+        if(StringUtils.hasLength(req.userId())){
+            userId = req.userId();
+        }
+        userId = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        OrderDto order = orderClient.createOrder(new CreateOrderRequest(userId, req.amount()));
 
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("order", order);
+
         return new ArchitectureResponse("retry-circuit-breaker", Instant.now(), data);
     }
+
+    @GetMapping("/orders/{id}")
+    public ArchitectureResponse getOrder(@PathVariable String id) {
+        OrderDto order = orderClient.getOrder(id);
+
+        return new ArchitectureResponse("retry-circuit-breaker", Instant.now(), Map.of("order", order));
+    }
+
+    @PatchMapping("/orders/{id}/status")
+    public ArchitectureResponse updateOrderStatus(@PathVariable String id, @Valid @RequestBody UpdateOrderStatusRequest req) {
+        OrderDto order = orderClient.updateStatus(id, new UpdateOrderStatusRequest(req.status(), req.version()));
+
+        return new ArchitectureResponse("optimistic-locking", Instant.now(), Map.of("order", order));
+    }
+
+
 
 
 }

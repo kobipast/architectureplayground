@@ -7,6 +7,7 @@ import RBACDemo from './RBACDemo';
 import RefreshTokenDemo from './RefreshTokenDemo';
 import RateLimitDemo from './RateLimitDemo';
 import CachingDemo from './CachingDemo';
+import OptimisticLockingDemo from './OptimisticLockingDemo';
 import './MainDashboard.css';
 
 const MainDashboard = () => {
@@ -17,6 +18,7 @@ const MainDashboard = () => {
   const [showRefreshTokenDemo, setShowRefreshTokenDemo] = useState(false);
   const [showRateLimitDemo, setShowRateLimitDemo] = useState(false);
   const [showCachingDemo, setShowCachingDemo] = useState(false);
+  const [showOptimisticLockingDemo, setShowOptimisticLockingDemo] = useState(false);
 
   const handleShowJWT = () => {
     const token = localStorage.getItem('token');
@@ -59,6 +61,10 @@ const MainDashboard = () => {
 
   if (showCachingDemo) {
     return <CachingDemo onBack={() => setShowCachingDemo(false)} />;
+  }
+
+  if (showOptimisticLockingDemo) {
+    return <OptimisticLockingDemo onBack={() => setShowOptimisticLockingDemo(false)} />;
   }
 
   return (
@@ -113,6 +119,12 @@ const MainDashboard = () => {
             onClick={() => setShowCachingDemo(true)}
           >
             Caching
+          </button>
+          <button 
+            className="dashboard-button" 
+            onClick={() => setShowOptimisticLockingDemo(true)}
+          >
+            Optimistic Locking
           </button>        
         </div>
       </div>

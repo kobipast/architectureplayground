@@ -1,16 +1,14 @@
 package com.kobipast.userservice.architecture.error;
 
 import com.kobipast.userservice.architecture.idempotency.IdempotencyConflictException;
+import com.kobipast.userservice.architecture.integration.error.DownstreamProblemException;
 import com.kobipast.userservice.architecture.observability.CorrelationIdFilter;
 import io.github.resilience4j.ratelimiter.RateLimiter;
 import io.github.resilience4j.ratelimiter.RateLimiterRegistry;
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.MDC;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ProblemDetail;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -105,6 +103,14 @@ public class GlobalExceptionHandler {
         return pd;
     }
 
+
+    @ExceptionHandler(DownstreamProblemException.class)
+    public ResponseEntity<String> handleDownstreamProblem(DownstreamProblemException ex) {
+        MediaType ct = MediaType.parseMediaType(ex.getContentType());
+        return ResponseEntity.status(ex.getStatus())
+                .contentType(ct)
+                .body(ex.getBody());
+    }
 
 
 }
