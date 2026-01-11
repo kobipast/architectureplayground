@@ -6,6 +6,8 @@ import ProblemDetailsDemo from './ProblemDetailsDemo';
 import RBACDemo from './RBACDemo';
 import RefreshTokenDemo from './RefreshTokenDemo';
 import RateLimitDemo from './RateLimitDemo';
+import CachingDemo from './CachingDemo';
+import OptimisticLockingDemo from './OptimisticLockingDemo';
 import './MainDashboard.css';
 
 const MainDashboard = () => {
@@ -15,6 +17,8 @@ const MainDashboard = () => {
   const [showRBACDemo, setShowRBACDemo] = useState(false);
   const [showRefreshTokenDemo, setShowRefreshTokenDemo] = useState(false);
   const [showRateLimitDemo, setShowRateLimitDemo] = useState(false);
+  const [showCachingDemo, setShowCachingDemo] = useState(false);
+  const [showOptimisticLockingDemo, setShowOptimisticLockingDemo] = useState(false);
 
   const handleShowJWT = () => {
     const token = localStorage.getItem('token');
@@ -53,6 +57,14 @@ const MainDashboard = () => {
 
   if (showRateLimitDemo) {
     return <RateLimitDemo onBack={() => setShowRateLimitDemo(false)} />;
+  }
+
+  if (showCachingDemo) {
+    return <CachingDemo onBack={() => setShowCachingDemo(false)} />;
+  }
+
+  if (showOptimisticLockingDemo) {
+    return <OptimisticLockingDemo onBack={() => setShowOptimisticLockingDemo(false)} />;
   }
 
   return (
@@ -101,6 +113,18 @@ const MainDashboard = () => {
             onClick={() => setShowIdempotencyDemo(true)}
           >
             Idempotency
+          </button>
+          <button 
+            className="dashboard-button" 
+            onClick={() => setShowCachingDemo(true)}
+          >
+            Caching
+          </button>
+          <button 
+            className="dashboard-button" 
+            onClick={() => setShowOptimisticLockingDemo(true)}
+          >
+            Optimistic Locking
           </button>        
         </div>
       </div>
