@@ -9,6 +9,7 @@ import RateLimitDemo from './RateLimitDemo';
 import CachingDemo from './CachingDemo';
 import OptimisticLockingDemo from './OptimisticLockingDemo';
 import RetryDemo from './RetryDemo';
+import CircuitBreakerDemo from './CircuitBreakerDemo';
 import './MainDashboard.css';
 
 const MainDashboard = () => {
@@ -21,6 +22,7 @@ const MainDashboard = () => {
   const [showCachingDemo, setShowCachingDemo] = useState(false);
   const [showOptimisticLockingDemo, setShowOptimisticLockingDemo] = useState(false);
   const [showRetryDemo, setShowRetryDemo] = useState(false);
+  const [showCircuitBreakerDemo, setShowCircuitBreakerDemo] = useState(false);
 
   const handleShowJWT = () => {
     const token = localStorage.getItem('token');
@@ -71,6 +73,10 @@ const MainDashboard = () => {
 
   if (showRetryDemo) {
     return <RetryDemo onBack={() => setShowRetryDemo(false)} />;
+  }
+
+  if (showCircuitBreakerDemo) {
+    return <CircuitBreakerDemo onBack={() => setShowCircuitBreakerDemo(false)} />;
   }
 
   return (
@@ -137,6 +143,12 @@ const MainDashboard = () => {
             onClick={() => setShowRetryDemo(true)}
           >
             Retry (Backoff)
+          </button>
+          <button 
+            className="dashboard-button" 
+            onClick={() => setShowCircuitBreakerDemo(true)}
+          >
+            Circuit Breaker
           </button>
         </div>
       </div>
