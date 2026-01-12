@@ -42,6 +42,7 @@ resilience4j:
         limitRefreshPeriod: 10s
         timeoutDuration: 0
   retry:
+    retryAspectOrder: 2
     instances:
       orders:
         max-attempts: 3
@@ -49,6 +50,7 @@ resilience4j:
         enable-exponential-backoff: true
         exponential-backoff-multiplier: 2.0
   circuitbreaker:
+    circuitBreakerAspectOrder: 1
     instances:
       orders:
         sliding-window-type: COUNT_BASED
@@ -58,3 +60,7 @@ resilience4j:
         wait-duration-in-open-state: 10s
         permitted-number-of-calls-in-half-open-state: 2
 
+logging:
+  level:
+    io.github.resilience4j: DEBUG
+    io.github.resilience4j.retry: DEBUG
