@@ -56,6 +56,14 @@ public class OrderClient {
                 .block();
     }
 
+    public OrderDto getOrderFlat(String orderId) {
+        return webClient.get()
+                .uri("/orders/{id}", orderId)
+                .retrieve()
+                .bodyToMono(OrderDto.class)
+                .block();
+    }
+
     private OrderDto getFallback(String orderId, Throwable t) {
         return new OrderDto(orderId, "fallback", "FAILED", 0, Instant.now().toString(), -1);
     }

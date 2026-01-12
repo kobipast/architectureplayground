@@ -124,8 +124,14 @@ public class ArchitectureController {
     }
 
     @GetMapping("/orders/{id}")
-    public ArchitectureResponse getOrder(@PathVariable String id) {
-        OrderDto order = orderClient.getOrder(id);
+    public ArchitectureResponse getOrder(@PathVariable String id, @RequestParam(name = "retry", defaultValue = "true") boolean retry) {
+        OrderDto order;
+        if(retry){
+            order = orderClient.getOrder(id);
+        }
+        else{
+            order = orderClient.getOrderFlat(id);
+        }
 
         return new ArchitectureResponse("retry-circuit-breaker", Instant.now(), Map.of("order", order));
     }

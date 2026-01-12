@@ -8,6 +8,7 @@ import RefreshTokenDemo from './RefreshTokenDemo';
 import RateLimitDemo from './RateLimitDemo';
 import CachingDemo from './CachingDemo';
 import OptimisticLockingDemo from './OptimisticLockingDemo';
+import RetryDemo from './RetryDemo';
 import './MainDashboard.css';
 
 const MainDashboard = () => {
@@ -19,6 +20,7 @@ const MainDashboard = () => {
   const [showRateLimitDemo, setShowRateLimitDemo] = useState(false);
   const [showCachingDemo, setShowCachingDemo] = useState(false);
   const [showOptimisticLockingDemo, setShowOptimisticLockingDemo] = useState(false);
+  const [showRetryDemo, setShowRetryDemo] = useState(false);
 
   const handleShowJWT = () => {
     const token = localStorage.getItem('token');
@@ -65,6 +67,10 @@ const MainDashboard = () => {
 
   if (showOptimisticLockingDemo) {
     return <OptimisticLockingDemo onBack={() => setShowOptimisticLockingDemo(false)} />;
+  }
+
+  if (showRetryDemo) {
+    return <RetryDemo onBack={() => setShowRetryDemo(false)} />;
   }
 
   return (
@@ -125,7 +131,13 @@ const MainDashboard = () => {
             onClick={() => setShowOptimisticLockingDemo(true)}
           >
             Optimistic Locking
-          </button>        
+          </button>
+          <button 
+            className="dashboard-button" 
+            onClick={() => setShowRetryDemo(true)}
+          >
+            Retry (Backoff)
+          </button>
         </div>
       </div>
     </div>
