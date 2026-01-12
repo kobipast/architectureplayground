@@ -2,10 +2,10 @@ import { useState } from 'react';
 import axiosClient from '../api/axiosClient';
 import './DemoCommon.css';
 
-const RetryDemo = ({ onBack }) => {
+const CircuitBreakerDemo = ({ onBack }) => {
   const [amount, setAmount] = useState('100');
   const [orderId, setOrderId] = useState(null);
-  const [attempts, setAttempts] = useState('1');
+  const [attempts, setAttempts] = useState('7');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [createResponse, setCreateResponse] = useState(null);
@@ -41,7 +41,7 @@ const RetryDemo = ({ onBack }) => {
     }
   };
 
-  const handleTriggerRetry = async (retry = true) => {
+  const handleTriggerRetry = async () => {
     if (!orderId) {
       setError('Please create an order first');
       return;
@@ -58,8 +58,7 @@ const RetryDemo = ({ onBack }) => {
     for (let i = 1; i <= numAttempts; i++) {
       const startTime = performance.now();
       try {
-        console.log('we are going to call the order service');
-        const result = await axiosClient.get(`/architecture/orders/${orderId}`,{params: retry ? {} : { retry: false }});
+        const result = await axiosClient.get(`/architecture/orders/${orderId}`);
         const endTime = performance.now();
         const duration = (endTime - startTime).toFixed(2);
         
@@ -114,15 +113,15 @@ const RetryDemo = ({ onBack }) => {
     <div className="demo-container">
       <div className="demo-card">
         <div className="demo-header">
-          <h2>Retry (Backoff) Demo</h2>
+          <h2>Circuit Breaker Demo</h2>
           <button className="back-button" onClick={onBack}>
             ← Back to Dashboard
           </button>
         </div>
 
         <div className="demo-description">
-          <p>This demo demonstrates retry and backoff behavior when calling the order service.</p>
-          <p>When the service is DOWN, each call will take longer due to retries/backoff. When UP, calls succeed quickly.</p>
+          <p>This demo demonstrates Circuit Breaker behavior when calling the order service.</p>
+          <p>When the service is DOWN more than 5 times, the circuit breaker will open and the calls will fail faster then the retry delay.</p>
         </div>
 
         <div className="input-section">
@@ -188,15 +187,8 @@ const RetryDemo = ({ onBack }) => {
             onClick={handleTriggerRetry}
             disabled={loading || !orderId}
           >
-            GET with Retry
-          </button>
-          <button
-            className="demo-button"
-            onClick={() => handleTriggerRetry(false)}
-            disabled={loading || !orderId}
-          >
-            Flat GET Order
-          </button>
+            GET Order ({attempts} times)
+          </button>        
           <button
             className="demo-button secondary"
             onClick={handleReset}
@@ -330,4 +322,4 @@ const RetryDemo = ({ onBack }) => {
   );
 };
 
-export default RetryDemo;
+export default CircuitBreakerDemo;
