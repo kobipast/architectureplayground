@@ -70,11 +70,16 @@ public class AuthController {
         // Generate JWT token
         String token = jwtService.generateToken(user);
 
+        RefreshToken rt = refreshTokenService.create(user);
+
+        ResponseCookie refreshCookie = createRefreshCookie(rt);
+
         // Create response
         UserDto userDto = userMapper.toDto(user);
         AuthResponse response = new AuthResponse(token, userDto);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).header(HttpHeaders.SET_COOKIE, refreshCookie.toString()).body(response);
+
     }
 
     @PostMapping("/login")
@@ -102,13 +107,7 @@ public class AuthController {
 
         RefreshToken rt = refreshTokenService.create(user);
 
-        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", rt.getToken())
-                .httpOnly(true)
-                .secure(false)          // dev
-                .path("/api/auth")
-                .sameSite("Lax")
-                .maxAge(Duration.ofDays(7))
-                .build();
+        ResponseCookie refreshCookie = createRefreshCookie(rt);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
@@ -179,6 +178,16 @@ public class AuthController {
 
         return ResponseEntity.noContent()
                 .header(HttpHeaders.SET_COOKIE, delete.toString())
+                .build();
+    }
+
+    ResponseCookie createRefreshCookie (RefreshToken rt){
+        return ResponseCookie.from("refreshToken", rt.getToken())
+                .httpOnly(true)
+                .secure(false)          // dev
+                .path("/api/auth")
+                .sameSite("Lax")
+                .maxAge(Duration.ofDays(7))
                 .build();
     }
 
