@@ -10,9 +10,9 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "kobipast-CI-test" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "kobipast-CI-test" ]
 
 jobs:
   build:
