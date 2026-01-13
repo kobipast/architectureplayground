@@ -16,3 +16,8 @@ spring:
     console:
       enabled: true
       path: /h2-console
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+    org.springframework.http: DEBUG
