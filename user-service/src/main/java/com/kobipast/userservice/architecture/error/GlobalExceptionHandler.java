@@ -46,7 +46,7 @@ public class GlobalExceptionHandler {
         }
 
         pd.setProperty("errors", errors);
-        pd.setProperty("correlationId", request.getHeader(CorrelationIdFilter.HEADER));
+        pd.setProperty("correlationId", correlationId(request));
         return pd;
     }
 
@@ -57,7 +57,7 @@ public class GlobalExceptionHandler {
         pd.setTitle("Internal Server Error");
         pd.setDetail(ex.getMessage());
         pd.setInstance(URI.create(request.getRequestURI()));
-        pd.setProperty("correlationId", request.getHeader(CorrelationIdFilter.HEADER));
+        pd.setProperty("correlationId", correlationId(request));
         return pd;
     }
 
@@ -112,5 +112,12 @@ public class GlobalExceptionHandler {
                 .body(ex.getBody());
     }
 
+    private String correlationId(HttpServletRequest request) {
+        String id = request.getHeader(CorrelationIdFilter.HEADER);
+        if (id == null || id.isBlank()) {
+            id = (String) request.getAttribute(CorrelationIdFilter.MDC_KEY);
+        }
+        return id;
+    }
 
 }

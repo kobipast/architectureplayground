@@ -28,7 +28,6 @@ public class CacheDemoService {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("userId", userId);
         data.put("generatedAt", Instant.now().toString());
-        data.put("cached", false);
         return data;
     }
 
